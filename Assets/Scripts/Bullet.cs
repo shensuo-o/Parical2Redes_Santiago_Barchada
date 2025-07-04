@@ -22,7 +22,12 @@ public class Bullet : NetworkBehaviour
         {
             Runner.Despawn(Object);
         }
-        transform.position += transform.right * Speed * Runner.DeltaTime;
+
+        if(Runner != null)
+        {
+            transform.position += transform.right * Speed * Runner.DeltaTime;
+        }
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

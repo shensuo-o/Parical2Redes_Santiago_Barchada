@@ -117,7 +117,7 @@ public class Player : NetworkBehaviour
         rb.velocity = targetVelocity;
     }
 
-    private void Jump()//Salto que se hace mas alto contra mas se sostiene apretado el boton.
+    private void Jump()//Salto 
     {
         if (isGrounded && isJumping)
         {
@@ -125,19 +125,6 @@ public class Player : NetworkBehaviour
             jumpTime = JumpStartTime;
 
             rb.velocity = Vector2.up * jumpForce;
-        }
-
-        if (Input.GetButton("Jump") && isJumping)
-        {
-            if (jumpTime > 0)
-            {
-                rb.velocity = Vector2.up * jumpForce;
-                jumpTime -= Runner.DeltaTime;
-            }
-            else
-            {
-                isJumping = false;
-            }
         }
     }
 
