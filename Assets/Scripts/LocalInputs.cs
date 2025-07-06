@@ -18,14 +18,14 @@ public class LocalInputs : MonoBehaviour
     {
         _networkInputData.movementInput = Input.GetAxis("Horizontal");
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetMouseButtonDown(0))
         {
             _isFirePressed = true;
         }
 
         //_isFirePressed |= Input.GetKeyDown(KeyCode.Space);
 
-        _isJumpPressed |= Input.GetKeyDown(KeyCode.W);
+        _isJumpPressed |= Input.GetKeyDown(KeyCode.Space);
     }
 
     public NetworkInputData GetLocalInputs()

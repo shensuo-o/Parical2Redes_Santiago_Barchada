@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,13 +8,13 @@ public class NicknameItem : MonoBehaviour
 
     private const float HEAD_OFFSET = 2.5F;
 
-    private Text _myText;
+    private TextMeshProUGUI _myText;
 
     public NicknameItem SetOwner(NetworkPlayer owner)
     {
         _owner = owner.transform;
 
-        _myText = GetComponent<Text>();
+        _myText = GetComponent<TextMeshProUGUI>();
 
         return this;
     }

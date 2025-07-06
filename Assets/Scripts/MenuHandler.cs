@@ -61,6 +61,6 @@ public class MenuHandler : MonoBehaviour
     {
         _hostGameBTN.interactable = false;
 
-        _networkRunnerHandler.CreateGame(_sessionName.text, "Game");
+        _networkRunnerHandler.CreateGame(_sessionName.text, "Lvl1");
     }
 }

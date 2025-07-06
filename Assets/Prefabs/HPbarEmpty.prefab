@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 8600321480153612987}
   - component: {fileID: 3470985819545503012}
   - component: {fileID: 2168453613204592628}
-  - component: {fileID: 4606065372056701758}
+  - component: {fileID: 6887783075946824524}
   m_Layer: 5
   m_Name: HPbarEmpty
   m_TagString: Untagged
@@ -152,7 +152,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4606065372056701758
+--- !u!114 &6887783075946824524
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -161,9 +161,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7956198293127998935}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd9ae5c02370c744f942b2f51b69f8b0, type: 3}
+  m_Script: {fileID: 11500000, guid: b88002e26e74d9140895d2f70885140d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OffSetAmount: 2
-  LifeBar: {fileID: 3308906509445610817}
-  TargetTransform: {fileID: 0}
+  _myLifeImage: {fileID: 3308906509445610817}

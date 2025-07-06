@@ -179,7 +179,7 @@ MonoBehaviour:
   Animator: {fileID: 6326506219097408979}
   ApplyTiming: 2
   SyncSettings: 79
-  StateHashes: 0000000015b524dc47ef5bf50b49257e11d81f9452834c63b940c49e
+  StateHashes: 00000000b92a1ce1a3bb260ba5df7cb021fcaa5f88d61dd09247273a
   TriggerHashes: 00000000
   TotalWords: 1
 --- !u!1 &1228599874720368752
@@ -253,7 +253,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9096704116771408556}
-  - component: {fileID: 3173262605499047738}
   - component: {fileID: 3079173229318664043}
   - component: {fileID: 1659938010976131347}
   - component: {fileID: 1512917592278330239}
@@ -287,37 +286,6 @@ Transform:
   - {fileID: 543933730327592044}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3173262605499047738
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5503311241891401613}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 486a5516fa3b874489a635b071938bb0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _HP: 0
-  MaxHP: 100
-  rb: {fileID: 0}
-  HorizontalInput: 0
-  Speed: 20
-  jumpForce: 35
-  JumpStartTime: 1
-  jumpTime: 0
-  isJumping: 0
-  isGrounded: 0
-  canDash: 1
-  startDash: 0
-  isDashing: 0
-  dashingPower: 4000
-  dashingTime: 0.25
-  dashingCooldown: 2
-  dashRight: 0
-  bodyAnimator: {fileID: 0}
-  bodySpriteRenderer: {fileID: 0}
 --- !u!70 &3079173229318664043
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -398,7 +366,6 @@ MonoBehaviour:
   NestedObjects:
   - {fileID: 8971925823920227179}
   NetworkedBehaviours:
-  - {fileID: 3173262605499047738}
   - {fileID: 7811443518228365918}
   - {fileID: 6301274488654395002}
   - {fileID: 6312056220193123011}
@@ -628,7 +595,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d1c5a07a25e9d640bf585c51ff2ea01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 3173262605499047738}
+  player: {fileID: 0}
   LHand: {fileID: 543933730327592044}
   RHand: {fileID: 2774334593422104267}
   bulletPref: {fileID: 7600901753204261384, guid: b144bbe6734564e4cbfaa30940c26639, type: 3}
