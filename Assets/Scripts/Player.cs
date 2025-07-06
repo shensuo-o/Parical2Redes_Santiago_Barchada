@@ -2,130 +2,88 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
-using Unity.VisualScripting;
 using System;
 
 public class Player : NetworkBehaviour
 {
-    //stats
-    [SerializeField] [Networked, OnChangedRender(nameof(UpdateLifeFeedback))] float HP { get; set; }
+    [SerializeField][Networked, OnChangedRender(nameof(UpdateLifeFeedback))] float HP { get; set; }
     [SerializeField] public float MaxHP;
 
-#region Variables Movimiento
-
-    //variables para el movimiento
+    [Header("Movimiento")]
     [SerializeField] private Rigidbody2D rb;
-    [SerializeField] public float HorizontalInput;
     [SerializeField] private float Speed;
-
-    //variables para el salto
     [SerializeField] private float jumpForce;
-    [SerializeField] private float JumpStartTime;
-    [SerializeField] private float jumpTime;
-    [SerializeField] public bool isJumping;
-    [SerializeField] private bool isGrounded;
 
-    //variables para el dash
-    [SerializeField] private bool canDash;
-    [SerializeField] private bool startDash;
-    [SerializeField] private bool isDashing;
+    [Header("Dash")]
+    [SerializeField] private bool canDash = true;
+    [SerializeField] private bool isDashing = false;
     [SerializeField] private float dashingPower;
     [SerializeField] private float dashingTime;
     [SerializeField] private float dashingCooldown;
     [SerializeField] private bool dashRight;
 
-    #endregion
+    private bool isGrounded;
 
     public Animator bodyAnimator;
     public SpriteRenderer bodySpriteRenderer;
 
     public event Action OnDespawn;
     public event Action<float> OnLifeUpdate;
+
     public override void Spawned()
     {
         rb = GetComponent<Rigidbody2D>();
         bodyAnimator = GetComponentInChildren<Animator>();
         bodySpriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
         if (HasStateAuthority)
         {
             Camera.main.GetComponent<CameraFollow>()?.SetTarget(transform);
         }
+
         GameManager.Instance.AddToList(this);
         HPbarManager.Instance.CreateLifeBar(this);
         HP = MaxHP;
     }
 
-    public void Update()
-    {
-        if (Input.GetButtonDown("Jump"))
-        {
-            isJumping = true;
-        }
-
-        if (Input.GetButtonUp("Jump"))
-        {
-            isJumping = false;
-        }
-
-        HorizontalInput = Input.GetAxisRaw("Horizontal");
-
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            startDash = true;
-        }      
-    }
-
     public override void FixedUpdateNetwork()
     {
-        if (!HasStateAuthority)
+        if (!HasStateAuthority) return;
+        if (isDashing) return;
+
+        if (!GetInput(out NetworkInputData input)) return;
+
+        // Movimiento horizontal
+        float horizontalInput = input.movementInput;
+        Move(horizontalInput);
+
+        // Salto
+        if (input.networkButtons.IsSet(MyButtons.Jump) && isGrounded)
         {
-            return;
-        }
-        if (isDashing)
-        {
-            return;
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         }
 
-        Jump();
-
-        if (HorizontalInput == 1)
+        // Dash
+        if (input.networkButtons.IsSet(MyButtons.Dash) && canDash)
         {
-            dashRight = true;
-            bodySpriteRenderer.flipX = false;
-        }
-        else if (HorizontalInput == -1)
-        {
-            dashRight = false;
-            bodySpriteRenderer.flipX = true;
-        }
-
-        if (startDash && canDash)
-        {
+            dashRight = horizontalInput >= 0;
             StartCoroutine(Dash());
         }
 
-        Movement(HorizontalInput);
+        // Flip sprite
+        if (horizontalInput > 0.1f)
+            bodySpriteRenderer.flipX = false;
+        else if (horizontalInput < -0.1f)
+            bodySpriteRenderer.flipX = true;
+
         bodyAnimator.SetBool("isRunning", Mathf.Abs(rb.velocity.x) > 0.1f);
     }
 
-#region Funciones Movimiento
-
-    private void Movement(float dir)//Toma la variable de direccion y la usa para moverse con velocity del rigidbody.
+    private void Move(float dir)
     {
-        var xVel = dir * Speed * 100 * Time.fixedDeltaTime;
+        float xVel = dir * Speed * 100 * Time.fixedDeltaTime;
         Vector2 targetVelocity = new Vector2(xVel, rb.velocity.y);
         rb.velocity = targetVelocity;
-    }
-
-    private void Jump()//Salto 
-    {
-        if (isGrounded && isJumping)
-        {
-            isJumping = true;
-            jumpTime = JumpStartTime;
-
-            rb.velocity = Vector2.up * jumpForce;
-        }
     }
 
     private IEnumerator Dash()
@@ -136,16 +94,8 @@ public class Player : NetworkBehaviour
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
 
-        if (dashRight)
-        {
-            //rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
-            rb.AddForce(new Vector2(transform.localScale.x * dashingPower, 0f));
-        }
-        else if (!dashRight)
-        {
-            //rb.velocity = new Vector2(-transform.localScale.x * dashingPower, 0f);
-            rb.AddForce(new Vector2(-transform.localScale.x * dashingPower, 0f));
-        }
+        Vector2 force = dashRight ? Vector2.right : Vector2.left;
+        rb.AddForce(force * dashingPower, ForceMode2D.Impulse);
 
         yield return new WaitForSeconds(dashingTime);
 
@@ -153,22 +103,15 @@ public class Player : NetworkBehaviour
         isDashing = false;
 
         yield return new WaitForSeconds(dashingCooldown);
-
         canDash = true;
-        startDash = false;
     }
-
-    #endregion
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_TakeDamage(float dmg)
     {
         HP -= dmg;
-
         if (HP <= 0f)
-        {
             Death();
-        }
     }
 
     public void Death()
@@ -185,12 +128,12 @@ public class Player : NetworkBehaviour
 
     void UpdateLifeFeedback()
     {
-        OnLifeUpdate(HP / MaxHP);
+        OnLifeUpdate?.Invoke(HP / MaxHP);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.layer == 10)
+        if (collision.gameObject.layer == 10) // caída al vacío
         {
             Death();
         }
@@ -198,7 +141,7 @@ public class Player : NetworkBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == 6)
+        if (collision.gameObject.layer == 6) // suelo
         {
             isGrounded = true;
         }
