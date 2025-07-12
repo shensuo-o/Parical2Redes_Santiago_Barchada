@@ -7,27 +7,68 @@ using Fusion.Sockets;
 
 public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
 {
+
     [SerializeField] private NetworkPrefabRef _playerPrefab1;
     [SerializeField] private NetworkPrefabRef _playerPrefab2;
+
+    private float _inputDirection;
+    private bool _dashBuffered;
+    private bool _shootBuffered;
+    private bool _jumpBuffered;
+
+    void Update()
+    {
+        _inputDirection = Input.GetAxis("Horizontal");
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            _dashBuffered = true;
+        }
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            _jumpBuffered = true;
+        }
+
+        if (Input.GetButtonUp("Jump"))
+        {
+            _jumpBuffered = false;
+        }
+
+        _shootBuffered = Input.GetMouseButton(0);
+    }
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         if (runner.IsServer)
         {
-            
             runner.Spawn(_playerPrefab1, null, null, player);
         }
     }
 
-    private LocalInputs _localInputs;
-
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        if (!NetworkPlayer.Local) return;
+        if (LocalPlayerReference.Instance == null)
+            return;
 
-        _localInputs ??= NetworkPlayer.Local.LocalInputs;
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 playerPos = LocalPlayerReference.Instance.transform.position;
+        Vector2 aimDir = (mouseWorld - playerPos).normalized;
 
-        input.Set(_localInputs.GetLocalInputs());
+        var data = new NetworkInputData
+        {
+            inputDir = _inputDirection,
+            isDashing = _dashBuffered,
+            isShoot = _shootBuffered,
+            aimDirection = aimDir,
+            isJumping = _jumpBuffered,
+        };
+
+        // Limpiar el buffer después de enviar
+        _dashBuffered = false;
+
+        input.Set(data);
+
     }
 
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)

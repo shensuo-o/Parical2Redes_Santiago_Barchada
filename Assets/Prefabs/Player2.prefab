@@ -259,6 +259,8 @@ GameObject:
   - component: {fileID: 1192671347905707150}
   - component: {fileID: 7811443518228365918}
   - component: {fileID: 6301274488654395002}
+  - component: {fileID: -6395012966201807820}
+  - component: {fileID: 57565091433019023}
   m_Layer: 12
   m_Name: Player2
   m_TagString: Untagged
@@ -368,6 +370,8 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 7811443518228365918}
   - {fileID: 6301274488654395002}
+  - {fileID: -6395012966201807820}
+  - {fileID: 57565091433019023}
   - {fileID: 6312056220193123011}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &1192671347905707150
@@ -432,6 +436,49 @@ MonoBehaviour:
     Position: 0.01
     Rotation: 0.01
     Scale: 0.01
+--- !u!114 &-6395012966201807820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5503311241891401613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66ae5863016ed43469b63ae98be34eff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &57565091433019023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5503311241891401613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 486a5516fa3b874489a635b071938bb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _HP: 100
+  MaxHP: 100
+  rb: {fileID: 1659938010976131347}
+  HorizontalInput: 0
+  Speed: 8
+  jumpForce: 20
+  JumpStartTime: 0.25
+  jumpTime: 0.25
+  isJumping: 0
+  isGrounded: 0
+  canDash: 0
+  startDash: 0
+  _isDashing: 0
+  dashingPower: 1000
+  dashingTime: 2
+  dashingCooldown: 2
+  dashRight: 0
+  bodyAnimator: {fileID: 6326506219097408979}
+  bodySpriteRenderer: {fileID: 1530379522970464647}
 --- !u!1 &6918057523499549104
 GameObject:
   m_ObjectHideFlags: 0

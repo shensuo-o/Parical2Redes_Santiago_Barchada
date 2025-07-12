@@ -29,11 +29,8 @@ public class Weapon : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        if (!HasStateAuthority)
-        {
-            return; 
-        }
-        
+        if (!GetInput(out NetworkInputData data)) return;
+
         //Vector2 dir = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         float angle = Mathf.Atan2(Dir.y, Dir.x) * Mathf.Rad2Deg;
         Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);

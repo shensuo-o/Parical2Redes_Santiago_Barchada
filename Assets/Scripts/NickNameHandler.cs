@@ -22,14 +22,14 @@ public class NicknameHandler : MonoBehaviour
         _nicknames = new List<NicknameItem>();
     }
 
-    public NicknameItem AddNickname(NetworkPlayer owner)
+    public NicknameItem AddNickname(Player owner)
     {
         var newNickname = Instantiate(_nicknameItemPrefab, transform)
                             .SetOwner(owner);
 
         _nicknames.Add(newNickname);
 
-        owner.OnLeft += () =>
+        owner.OnDespawn += () =>
         {
             _nicknames.Remove(newNickname);
             Destroy(newNickname.gameObject);

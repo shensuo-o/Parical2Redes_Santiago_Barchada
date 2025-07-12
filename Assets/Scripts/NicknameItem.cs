@@ -10,7 +10,7 @@ public class NicknameItem : MonoBehaviour
 
     private TextMeshProUGUI _myText;
 
-    public NicknameItem SetOwner(NetworkPlayer owner)
+    public NicknameItem SetOwner(Player owner)
     {
         _owner = owner.transform;
 
