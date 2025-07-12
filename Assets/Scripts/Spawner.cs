@@ -1,45 +1,40 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using Fusion.Sockets;
-using System;
 
 public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
 {
-    [SerializeField] private NetworkPrefabRef _playerPrefab;
-
-    [SerializeField] private List<PlayerRef> waitingPlayers = new List<PlayerRef>();
+    [SerializeField] private NetworkPrefabRef _playerPrefab1;
+    [SerializeField] private NetworkPrefabRef _playerPrefab2;
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        if (!runner.IsServer) return;
-
-        waitingPlayers.Add(player);
-        Debug.Log($"Player joined. Current count: {waitingPlayers.Count}");
-
-        if (waitingPlayers.Count >= 2)
+        if (runner.IsServer)
         {
-            foreach (var p in waitingPlayers)
-            {
-                runner.Spawn(_playerPrefab, Vector3.zero, Quaternion.identity, p);
-            }
-
-            waitingPlayers.Clear();
+            
+            runner.Spawn(_playerPrefab1, null, null, player);
         }
     }
+
+    private LocalInputs _localInputs;
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
         if (!NetworkPlayer.Local) return;
 
-        var data = NetworkPlayer.Local.LocalInputs.GetLocalInputs();
-        input.Set(data);
+        _localInputs ??= NetworkPlayer.Local.LocalInputs;
+
+        input.Set(_localInputs.GetLocalInputs());
     }
 
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
     {
         runner.Shutdown();
     }
+
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
@@ -58,4 +53,3 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data) { }
     public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress) { }
 }
-

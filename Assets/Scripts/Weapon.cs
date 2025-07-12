@@ -1,21 +1,57 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
+using System;
 
 public class Weapon : NetworkBehaviour
 {
-    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private Player player;
+    [SerializeField] private Transform LHand;
+    [SerializeField] private Transform RHand;
+
+    [SerializeField] private GameObject bulletPref;
     [SerializeField] private Transform barrel;
+    [SerializeField] private bool Fire;
+
+    [SerializeField] private Vector2 Dir;
+
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Fire = true;
+        }
+
+        Dir = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+    }
 
     public override void FixedUpdateNetwork()
     {
-        if (!HasStateAuthority || !GetInput(out NetworkInputData input)) return;
-
-        float angle = Mathf.Atan2(input.aimDirection.y, input.aimDirection.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0f, 0f, angle);
-
-        if (input.isFirePressed)
+        if (!HasStateAuthority)
         {
-            Runner.Spawn(bulletPrefab, barrel.position, barrel.rotation);
+            return; 
+        }
+        
+        //Vector2 dir = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        float angle = Mathf.Atan2(Dir.y, Dir.x) * Mathf.Rad2Deg;
+        Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        transform.rotation = rotation;  
+
+        if (Fire)
+        {
+            NetworkObject bullet = Runner.Spawn(bulletPref, barrel.transform.position, barrel.transform.rotation);
+            Fire = false;
+        }
+
+        if (player.HorizontalInput == 1)
+        {
+            transform.position = RHand.transform.position;
+        }
+        else if(player.HorizontalInput == -1)
+        {
+            transform.position = LHand.transform.position;
         }
     }
 }

@@ -60,14 +60,11 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
     {
         _currentRunner.ProvideInput = true;
 
-        _currentRunner.AddCallbacks(FindObjectOfType<Spawner>());
-
         var result = await _currentRunner.StartGame(new StartGameArgs()
         {
             GameMode = gameMode,
             Scene = SceneRef.FromIndex(sceneIndex),
-            SessionName = sessionName,
-            SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+            SessionName = sessionName
         });
 
         if (!result.Ok)
